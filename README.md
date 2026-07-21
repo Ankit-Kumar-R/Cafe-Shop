@@ -1,25 +1,60 @@
-<<<<<<< HEAD
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# ☕ Cafe Shop Web Application
 
-# Run and deploy your AI Studio app
+A modern, responsive, and user-friendly web application designed for a premium coffee shop. This project showcases the cafe's menu, ambiance, and allows users to explore available items easily.
 
-This contains everything you need to run your app locally.
+## 🚀 Features
 
-View your app in AI Studio: https://ai.studio/apps/ce9a961e-00da-4a0c-b33c-8f11fe3dfb73
+- **Responsive Design:** Fully optimized for mobile, tablet, and desktop screens.
+- **Interactive Menu:** Filterable food and beverage categories with pricing.
+- **About Section:** Information about the cafe's story, sourcing, and history.
+- **Contact & Location:** Integrated contact form with opening hours and location details.
+- **Online Ordering (Optional):** Basic cart functionality for selecting items.
 
-## Run Locally
+## 🛠️ Tech Stack
 
-**Prerequisites:**  Node.js
+- **Frontend:** HTML5, CSS3, JavaScript (or specify framework like React / Vue)
+- **Icons & Fonts:** FontAwesome / Google Fonts
+
+## 📦 Installation & Setup
+
+Follow these steps to run the project locally on your machine:
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com
+   ```
+
+2. **Navigate to the project directory:**
+   ```bash
+   cd cafe-shop-app
+   ```
+
+3. **Open the project:**
+   - If it's a simple HTML/CSS project, just open `index.html` in your browser.
+   - If using Node.js/React, run:
+     ```bash
+     npm install
+     npm start
+     ```
+
+## 📸 Screenshots
 
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
-=======
-# Cafe-Shop
-"Coffee Shop management system with real-time order tracking"
->>>>>>> 94325ef1aee47ff98cffb08ced87d5e26e815436
+`![Cafe Home Page](picture/pic.png)`
+
+## 🤝 Contributing
+
+Contributions are welcome! If you want to improve this project:
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-line`).
+3. Commit your changes (`git commit -m 'Add some feature'`).
+4. Push to the branch (`git push origin feature-line`).
+5. Open a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+
+
+
