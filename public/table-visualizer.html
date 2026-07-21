@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Table Status Visualizer</title>
+  <style>
+    :root {
+      --bg-color: #0f172a; /* Slate 900 */
+      --card-bg: rgba(30, 41, 59, 0.5); /* Slate 800 */
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      
+      --color-available: #22c55e;
+      --color-available-bg: rgba(34, 197, 94, 0.1);
+      
+      --color-occupied: #ef4444;
+      --color-occupied-bg: rgba(239, 68, 68, 0.1);
+      
+      --color-reserved: #f59e0b;
+      --color-reserved-bg: rgba(245, 158, 11, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3rem 1rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 2rem;
+      letter-spacing: -0.05em;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+    }
+
+    .indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .indicator.available { background-color: var(--color-available); box-shadow: 0 0 10px var(--color-available); }
+    .indicator.occupied { background-color: var(--color-occupied); box-shadow: 0 0 10px var(--color-occupied); }
+    .indicator.reserved { background-color: var(--color-reserved); box-shadow: 0 0 10px var(--color-reserved); }
+
+    /* Grid Layout */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    /* Card Design */
+    .card {
+      position: relative;
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 1.5rem;
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(10px);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .card.available {
+      background: var(--color-available-bg);
+      border-color: rgba(34, 197, 94, 0.3);
+    }
+    
+    .card.available:hover { border-color: var(--color-available); }
+
+    .card.occupied {
+      background: var(--color-occupied-bg);
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .card.occupied:hover { border-color: var(--color-occupied); }
+
+    .card.reserved {
+      background: var(--color-reserved-bg);
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    .card.reserved:hover { border-color: var(--color-reserved); }
+
+    .card h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .card .status-text {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+    }
+
+    .card.available .status-text { color: var(--color-available); }
+    .card.occupied .status-text { color: var(--color-occupied); }
+    .card.reserved .status-text { color: var(--color-reserved); }
+
+    /* Dropdown Menu */
+    .dropdown {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: #1e293b;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 0.75rem;
+      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+      z-index: 50;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+    }
+
+    .card.active .dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(5px);
+    }
+
+    .dropdown-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      text-align: left;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    .dropdown-btn:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .dropdown-btn.opt-available:hover { color: var(--color-available); }
+    .dropdown-btn.opt-occupied:hover { color: var(--color-occupied); }
+    .dropdown-btn.opt-reserved:hover { color: var(--color-reserved); }
+
+  </style>
+</head>
+<body>
+
+  <h1>Table Status</h1>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="indicator available"></div>
+      Available
+    </div>
+    <div class="legend-item">
+      <div class="indicator occupied"></div>
+      Occupied
+    </div>
+    <div class="legend-item">
+      <div class="indicator reserved"></div>
+      Reserved
+    </div>
+  </div>
+
+  <div class="grid" id="tableGrid">
+    <!-- Cards will be generated here by JS -->
+  </div>
+
+  <script>
+    // 2. Functional Requirements (JavaScript)
+    // State Management: Maintain an array of table objects
+    const tables = Array.from({ length: 12 }, (_, i) => ({
+      id: `T${i + 1}`,
+      status: i % 3 === 0 ? 'reserved' : i % 2 === 0 ? 'occupied' : 'available'
+    }));
+
+    const grid = document.getElementById('tableGrid');
+    let activeCardId = null;
+
+    // Render the grid
+    function renderTables() {
+      grid.innerHTML = '';
+      
+      tables.forEach(table => {
+        const card = document.createElement('div');
+        card.className = `card ${table.status} ${activeCardId === table.id ? 'active' : ''}`;
+        card.dataset.id = table.id;
+        
+        card.innerHTML = `
+          <h2>${table.id}</h2>
+          <span class="status-text">${table.status}</span>
+          <div class="dropdown" onclick="event.stopPropagation()">
+            <button class="dropdown-btn opt-available" onclick="updateStatus('${table.id}', 'available')">Available</button>
+            <button class="dropdown-btn opt-occupied" onclick="updateStatus('${table.id}', 'occupied')">Occupied</button>
+            <button class="dropdown-btn opt-reserved" onclick="updateStatus('${table.id}', 'reserved')">Reserved</button>
+          </div>
+        `;
+
+        // Interactive Status Toggle
+        card.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (activeCardId === table.id) {
+            activeCardId = null; // Toggle off
+          } else {
+            activeCardId = table.id;
+          }
+          renderTables();
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    // Dynamic DOM Updates
+    window.updateStatus = (id, newStatus) => {
+      const table = tables.find(t => t.id === id);
+      if (table) {
+        table.status = newStatus;
+        activeCardId = null; // Close dropdown after selection
+        renderTables();
+      }
+    };
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', () => {
+      if (activeCardId !== null) {
+        activeCardId = null;
+        renderTables();
+      }
+    });
+
+    // Initial render
+    renderTables();
+  </script>
+</body>
+</html>

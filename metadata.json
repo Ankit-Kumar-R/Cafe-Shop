@@ -1,0 +1,8 @@
+{
+  "name": "AK Cafe SHOP",
+  "description": "Full-stack restaurant management system with POS, table bookings, and admin dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
